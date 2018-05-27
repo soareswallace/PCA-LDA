@@ -317,7 +317,7 @@
 %     19. total_Op        : numeric % total operators
 %     20. total_Opnd      : numeric % total operands
 %     21: branchCount     : numeric % of the flow graph
-%     22. problems        : {false,true}% module has/has not one or more
+%     22. defects        : {false,true}% module has/has not one or more
 %                                   % reported defects
 
 % 8. Missing attributes: none

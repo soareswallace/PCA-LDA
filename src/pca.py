@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
-import numpy
 from scipy.io import arff
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import plotly.plotly as py
-from plotly.graph_objs import *
-import plotly.tools as tls
+from sklearn.cross_validation import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 
 def load_dataset(filename):
     data = arff.loadarff(filename)
@@ -17,12 +15,11 @@ def collect_attributes(df):
     columns = list(df.columns.values)
     return columns
 
-def pca(df, columns):
-
+def pca(df, columns, components):
     X = df[columns[:-1]]
     y = df[columns[-1]]
-    n = len(y)
-    print(y.T[0])
+    y.replace({b'no': 2.0, b'yes': 4.0, b'false': 4.0, b'true': 4.0}, inplace=True)
+    X = X.fillna(X.mean())
     X_std = StandardScaler().fit_transform(X)
     cov_mat = np.cov(X_std.T)
     eig_vals, eig_vecs = np.linalg.eig(cov_mat)
@@ -34,20 +31,29 @@ def pca(df, columns):
     eig_pairs.sort()
     eig_pairs.reverse()
     #Two PCAs are chossen to project the data
-
-    matrix_w = np.hstack((eig_pairs[0][1].reshape(len(columns)-1,1),eig_pairs[1][1].reshape(len(columns)-1,1), eig_pairs[2][1].reshape(len(columns)-1,1)))
+    w = [eig_pairs[i][1] for i in range(components)]
+    matrix_w = np.array(w).T
     new_points_projected = X_std.dot(matrix_w)
     new_space = pd.DataFrame(new_points_projected)
     new_space['defect'] = y
-    print ('New Space Generated')
     return new_space
 
 
 def main():
-    filename = 'kc1.arff'
-    df = load_dataset(filename)
-    attributes = collect_attributes(df)
-    new_space = pca(df, attributes)
+    filename = ['kc2.arff','jm1.arff']
+    components = [1, 5, 10, 15, 20]
+    for files in filename:
+        for dimensions in components:
+            df = load_dataset(files)
+            attributes = collect_attributes(df)
+            new_space = pca(df, attributes, dimensions)
+            X = np.array(new_space.ix[:, 0:dimensions])  # end index is exclusive
+            y = np.array(new_space['defect'])
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+            knn = KNeighborsClassifier(n_neighbors=1)
+            knn.fit(X_train, y_train)
+            pred = knn.predict(X_test)
+            print ("For " + files + " with " + str(dimensions) + " dimensions, the accuracy was: " + str(accuracy_score(y_test, pred)))
 
 
 if __name__ == "__main__":
