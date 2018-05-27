@@ -6,19 +6,19 @@ from sklearn.cross_validation import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
-def load_dataset(filename):
+def loadDataset(filename):
     data = arff.loadarff(filename)
     df = pd.DataFrame(data[0])
     return df
 
-def collect_attributes(df):
+def collectAttributes(df):
     columns = list(df.columns.values)
     return columns
 
 def pca(df, columns, components):
     X = df[columns[:-1]]
     y = df[columns[-1]]
-    y.replace({b'no': 2.0, b'yes': 4.0, b'false': 4.0, b'true': 4.0}, inplace=True)
+    y.replace({b'no': 2.0, b'yes': 4.0, b'false': 2.0, b'true': 4.0}, inplace=True)
     X = X.fillna(X.mean())
     X_std = StandardScaler().fit_transform(X)
     cov_mat = np.cov(X_std.T)
@@ -38,22 +38,26 @@ def pca(df, columns, components):
     new_space['defect'] = y
     return new_space
 
+def useKnnToGetAccuracy(new_space, dimensions):
+    X = np.array(new_space.ix[:, 0:dimensions])  # end index is exclusive
+    y = np.array(new_space['defect'])
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
+    knn = KNeighborsClassifier(n_neighbors=5)
+    knn.fit(X_train, y_train)
+    pred = knn.predict(X_test)
+    return 100 * accuracy_score(y_test, pred)
+
 
 def main():
     filename = ['kc2.arff','jm1.arff']
     components = [1, 5, 10, 15, 20]
     for files in filename:
         for dimensions in components:
-            df = load_dataset(files)
-            attributes = collect_attributes(df)
+            df = loadDataset(files)
+            attributes = collectAttributes(df)
             new_space = pca(df, attributes, dimensions)
-            X = np.array(new_space.ix[:, 0:dimensions])  # end index is exclusive
-            y = np.array(new_space['defect'])
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
-            knn = KNeighborsClassifier(n_neighbors=1)
-            knn.fit(X_train, y_train)
-            pred = knn.predict(X_test)
-            print ("For " + files + " with " + str(dimensions) + " dimensions, the accuracy was: " + str(accuracy_score(y_test, pred)))
+            accuracy = useKnnToGetAccuracy(new_space, dimensions)
+            print ("For " + files + " with " + str(dimensions) + " dimensions, the accuracy was: " + str(accuracy) + "%")
 
 
 if __name__ == "__main__":
