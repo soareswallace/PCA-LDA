@@ -1,10 +1,11 @@
-import numpy as np
 import pandas as pd
+import numpy as np
 from scipy.io import arff
 from sklearn.preprocessing import StandardScaler
 from sklearn.cross_validation import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
 
 def loadDataset(filename):
     data = arff.loadarff(filename)
@@ -30,7 +31,7 @@ def pca(df, columns, components):
     # Sort the (eigenvalue, eigenvector) tuples from high to low
     eig_pairs.sort()
     eig_pairs.reverse()
-    #Two PCAs are chossen to project the data
+    #PCAs are chossen to project the data
     w = [eig_pairs[i][1] for i in range(components)]
     matrix_w = np.array(w).T
     new_points_projected = X_std.dot(matrix_w)
@@ -47,10 +48,23 @@ def useKnnToGetAccuracy(new_space, dimensions):
     pred = knn.predict(X_test)
     return 100 * accuracy_score(y_test, pred)
 
+def showGraph(components, results, filename):
+    # Fixing random state for reproducibility
+    np.random.seed(19680801)
+
+    fig1, ax1 = plt.subplots()
+    ax1.plot(components,results[filename[0]] , '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
+    ax1.grid()
+    fig2, ax2 = plt.subplots()
+    ax2.plot(components, results[filename[1]], '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
+    ax2.grid()
+    plt.show()
+
 
 def main():
     filename = ['kc2.arff','jm1.arff']
     components = [1, 5, 10, 15, 20]
+    results = {'kc2.arff': [], 'jm1.arff': []}
     for files in filename:
         for dimensions in components:
             df = loadDataset(files)
@@ -58,7 +72,8 @@ def main():
             new_space = pca(df, attributes, dimensions)
             accuracy = useKnnToGetAccuracy(new_space, dimensions)
             print ("For " + files + " with " + str(dimensions) + " dimensions, the accuracy was: " + str(accuracy) + "%")
-
+            results[files].append(accuracy)
+    showGraph(components, results, filename)
 
 if __name__ == "__main__":
     main()
