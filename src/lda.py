@@ -1,12 +1,8 @@
-import pandas as pd
 import numpy as np
-from scipy.io import arff
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import StandardScaler
-from sklearn.cross_validation import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
 
 def loadDataset(filename):
     data = arff.loadarff(filename)
