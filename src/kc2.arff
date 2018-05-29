@@ -319,12 +319,12 @@
 %     19. total_Op        : numeric % total operators
 %     20. total_Opnd      : numeric % total operands
 %     21: branchCount     : numeric % of the flow graph
-%     22. problems        : {no,yes}% module has/has not one or more
+%     22. defects        : {no,yes}% module has/has not one or more
 %                                   % reported defects
 
 % 8. Missing attributes: none
 
-% 9. Class Distribution: the class value (problems) is discrete
+% 9. Class Distribution: the class value (defects) is discrete
 %    yes: 105 = 20.5%
 %    no:  415 = 79.5%
 
@@ -353,7 +353,7 @@
 @attribute total_Op   numeric
 @attribute total_Opnd   numeric
 @attribute branchCount   numeric
-@attribute problems {no,yes}
+@attribute defects {no,yes}
 
 @data
 

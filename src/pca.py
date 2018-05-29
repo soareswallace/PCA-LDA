@@ -51,13 +51,17 @@ def useKnnToGetAccuracy(new_space, dimensions):
 def showGraph(components, results, filename):
     # Fixing random state for reproducibility
     np.random.seed(19680801)
-
+    plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.labelbottom'] = True
     fig1, ax1 = plt.subplots()
     ax1.plot(components,results[filename[0]] , '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
     ax1.grid()
+    ax1.set_xlabel('Componentes')
+    ax1.set_ylabel('Acurácia')
     fig2, ax2 = plt.subplots()
     ax2.plot(components, results[filename[1]], '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
     ax2.grid()
+    ax2.set_xlabel('Componentes')
+    ax2.set_ylabel('Acurácia')
     plt.show()
 
 
