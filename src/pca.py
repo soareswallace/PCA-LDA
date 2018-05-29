@@ -51,24 +51,25 @@ def useKnnToGetAccuracy(new_space, dimensions):
 def showGraph(components, results, filename):
     # Fixing random state for reproducibility
     np.random.seed(19680801)
-    plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.labelbottom'] = True
     fig1, ax1 = plt.subplots()
     ax1.plot(components,results[filename[0]] , '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
     ax1.grid()
     ax1.set_xlabel('Componentes')
     ax1.set_ylabel('Acurácia')
+    ax1.set_title(filename[0])
     fig2, ax2 = plt.subplots()
     ax2.plot(components, results[filename[1]], '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
     ax2.grid()
     ax2.set_xlabel('Componentes')
     ax2.set_ylabel('Acurácia')
+    ax2.set_title(filename[1])
     plt.show()
 
 
 def main():
-    filename = ['kc2.arff','jm1.arff']
+    filename = ['kc2.arff','kc1.arff']
     components = [1, 5, 10, 15, 20]
-    results = {'kc2.arff': [], 'jm1.arff': []}
+    results = {'kc2.arff': [], 'kc1.arff': []}
     for files in filename:
         for dimensions in components:
             df = loadDataset(files)

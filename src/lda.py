@@ -80,7 +80,7 @@ def main():
             attributes = collectAttributes(df)
             new_space = lda(df, attributes, dimensions)
             accuracy = useKnnToGetAccuracy(new_space, dimensions)
-            print("The accuracy was: " + str(accuracy) + "%")
+            print("The accuracy was for " + str(files) + " was: " + str(accuracy) + "%")
             results[files].append(accuracy)
 
 if __name__ == "__main__":
