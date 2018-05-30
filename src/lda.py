@@ -16,7 +16,7 @@ def collectAttributes(df):
     return columns
 
 def useKnnToGetAccuracy(new_space, dimensions):
-    X = np.array(new_space.ix[:, 0:dimensions])  # end index is exclusive
+    X = np.array(new_space.ix[:, 0:dimensions])
     y = np.array(new_space['defect'])
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
     knn = KNeighborsClassifier(n_neighbors=5)
@@ -40,16 +40,16 @@ def lda(df, columns, components):
         class_sc_mat = np.zeros((number_of_features, number_of_features))  # scatter matrix for every class
         for row in X[y == cl]:
             row = row.reshape(number_of_features, 1)
-            mv = mv.reshape(number_of_features, 1)  # make column vectors
+            mv = mv.reshape(number_of_features, 1)
             class_sc_mat += (row - mv).dot((row - mv).T)
-        S_W += class_sc_mat  # sum class scatter matrices
+        S_W += class_sc_mat
 
     S_B = np.zeros((number_of_features, number_of_features))
     for i, mean_vec in enumerate(mean_vec):
         n = X[y == i + 1, :].shape[0]
-        mean_vec = mean_vec.reshape(number_of_features, 1)  # make column vector
+        mean_vec = mean_vec.reshape(number_of_features, 1)
         overall_mean = np.zeros((number_of_features, 1))
-        overall_mean = overall_mean.reshape(number_of_features, 1)  # make column vector
+        overall_mean = overall_mean.reshape(number_of_features, 1)
         S_B += n * (mean_vec - overall_mean).dot((mean_vec - overall_mean).T)
 
     eig_vals, eig_vecs = np.linalg.eig(np.linalg.inv(S_W).dot(S_B))

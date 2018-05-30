@@ -31,7 +31,8 @@ def pca(df, columns, components):
     # Sort the (eigenvalue, eigenvector) tuples from high to low
     eig_pairs.sort()
     eig_pairs.reverse()
-    #PCAs are chossen to project the data
+    for i in eig_pairs:
+        print(i[0])
     w = [eig_pairs[i][1] for i in range(components)]
     matrix_w = np.array(w).T
     new_points_projected = X_std.dot(matrix_w)
@@ -40,7 +41,7 @@ def pca(df, columns, components):
     return new_space
 
 def useKnnToGetAccuracy(new_space, dimensions):
-    X = np.array(new_space.ix[:, 0:dimensions])  # end index is exclusive
+    X = np.array(new_space.ix[:, 0:dimensions])
     y = np.array(new_space['defect'])
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
     knn = KNeighborsClassifier(n_neighbors=5)
@@ -49,7 +50,6 @@ def useKnnToGetAccuracy(new_space, dimensions):
     return 100 * accuracy_score(y_test, pred)
 
 def showGraph(components, results, filename):
-    # Fixing random state for reproducibility
     np.random.seed(19680801)
     fig1, ax1 = plt.subplots()
     ax1.plot(components,results[filename[0]] , '-o', ms=20, lw=2, alpha=0.7, mfc='orange')
